@@ -1,0 +1,1 @@
+Le bouton Contact Doctor affichera une boite de dialogue avec le contact du docteur

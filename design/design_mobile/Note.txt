@@ -1,0 +1,7 @@
+Mesure physique (Poids et Taille )dans le screen patient_historic
+ c'est à mettre dans l'ecran New_patient
+
+
+dans l'ecran inscription , mettre juste les champs pour les attributs de classe AC
+créer un autre screen supplementaire pour la recuperation de mot de passe( faire comme avec le projet Todo-List Dclic) 
+recuperation Local sans connection
