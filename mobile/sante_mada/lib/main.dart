@@ -5,7 +5,11 @@ import 'package:flutter/material.dart';
 //import 'patient_consultation/PatientConsultation.dart';
 //import 'feedback_doctor/FeedBackDoctor.dart';
 //import 'setting_AC/SettingAC.dart';
-import 'Demande_Special/DemandeSpecial.dart';
+//import 'Demande_Special/DemandeSpecial.dart';
+//import 'acceuil_login/mdp_forget/ForgetMdp.dart';
+//import 'acceuil_login/mdp_forget/VerificationCode.dart';
+//import 'acceuil_login/mdp_forget/NewMdp.dart';
+import 'navbar/NavBar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,6 +21,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: DemandeSpecial());
+    return const MaterialApp(home: MainNavigation());
   }
 }
