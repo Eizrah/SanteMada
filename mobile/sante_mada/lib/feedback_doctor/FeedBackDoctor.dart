@@ -71,10 +71,7 @@ class _FeedBackDoctorState extends State<FeedBackDoctor> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => debugPrint("Retour"),
-        ),
+        automaticallyImplyLeading: false,
         title: const Text(
           'Doctor Feedbacks',
           style: TextStyle(
@@ -83,16 +80,16 @@ class _FeedBackDoctorState extends State<FeedBackDoctor> {
             fontSize: 18,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: const Icon(Icons.search, color: Colors.white),
-            onPressed: () {},
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(Icons.notifications_outlined, color: Colors.white),
+        //     onPressed: () {},
+        //   ),
+        //   IconButton(
+        //     icon: const Icon(Icons.search, color: Colors.white),
+        //     onPressed: () {},
+        //   ),
+        // ],
       ),
       body: SingleChildScrollView(
         child: Padding(

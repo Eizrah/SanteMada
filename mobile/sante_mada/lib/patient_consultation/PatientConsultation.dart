@@ -38,10 +38,7 @@ class _PatientConsultationState extends State<PatientConsultation> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => debugPrint("Retour"),
-        ),
+        automaticallyImplyLeading: false,
         title: const Text(
           'Historique & Symptômes',
           style: TextStyle(
@@ -50,16 +47,16 @@ class _PatientConsultationState extends State<PatientConsultation> {
             fontSize: 18,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.cloud_off, color: Color(0xFF2196F3)),
-            onPressed: () => debugPrint("Sync status"),
-          ),
-          IconButton(
-            icon: const Icon(Icons.more_vert, color: Colors.white),
-            onPressed: () => debugPrint("More options"),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(Icons.cloud_off, color: Color(0xFF2196F3)),
+        //     onPressed: () => debugPrint("Sync status"),
+        //   ),
+        //   IconButton(
+        //     icon: const Icon(Icons.more_vert, color: Colors.white),
+        //     onPressed: () => debugPrint("More options"),
+        //   ),
+        // ],
       ),
       body: SingleChildScrollView(
         child: Padding(

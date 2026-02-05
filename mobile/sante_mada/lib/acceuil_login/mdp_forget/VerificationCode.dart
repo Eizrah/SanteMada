@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sante_mada/acceuil_login/mdp_forget/NewMdp.dart';
 import 'package:sante_mada/classes/widgetUtil.dart';
 
 class VerificationCode extends StatefulWidget {
@@ -149,6 +150,9 @@ class _VerificationCode extends State<VerificationCode> {
                           ),
                           backgroundColor: const Color(0xFF2196F3),
                         ),
+                      );
+                      Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const NewMdp()),
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sante_mada/acceuil_login/login/Login.dart';
 import 'package:sante_mada/classes/widgetUtil.dart';
 
 class NewMdp extends StatefulWidget {
@@ -161,6 +162,7 @@ class _NewMdp extends State<NewMdp> {
                           backgroundColor: const Color(0xFF2196F3),
                         ),
                       );
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const Login()));
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(

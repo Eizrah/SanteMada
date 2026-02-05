@@ -47,12 +47,7 @@ class _AddPatient extends State<AddPatient> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            debugPrint("bouton retour cliquer");
-          },
-        ),
+        automaticallyImplyLeading: false,
         title: const Text(
           'Enregistrement du Patient',
           style: TextStyle(

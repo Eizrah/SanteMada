@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sante_mada/acceuil_login/mdp_forget/VerificationCode.dart';
 import 'package:sante_mada/classes/widgetUtil.dart';
 
 class ForgetMdp extends StatefulWidget {
@@ -135,11 +136,16 @@ class _ForgetMdpState extends State<ForgetMdp> {
                 height: 58,
                 child: ElevatedButton(
                   onPressed: () {
-                    //ici la logic pour verifier le  que le code geneter == à la valeur entrer par l'user
+                    //ici la logic pour verifier le  que le code genere == à la valeur entrer par l'user
                     String numAgent = _numAgentController.text;
                     debugPrint("Bouton réinitialiser cliqué");
                     debugPrint("Numéro Agent: $numAgent");
-
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const VerificationCode(),
+                      ),
+                    );
                     // Afficher un message de confirmation
                     if (numAgent.isNotEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(

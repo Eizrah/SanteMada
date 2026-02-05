@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:sante_mada/acceuil_login/mdp_forget/ForgetMdp.dart';
 import 'package:sante_mada/classes/widgetUtil.dart';
+import 'package:sante_mada/navbar/NavBar.dart';
+// import 'package:sante_mada/new_patient/AddPatient.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -30,10 +33,7 @@ class _LoginState extends State<Login> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          //onPressed: () => Navigator.of(context).pop(),
-          onPressed: () {
-            debugPrint(" bouton retour cliquer");
-          },
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       extendBodyBehindAppBar: true,
@@ -108,7 +108,8 @@ class _LoginState extends State<Login> {
                     label: "Email/Numéro utilisateur",
                     hint: "Entrez votre identifiant",
                     icon: Icons.email_outlined,
-                    controller: _identifiantController, keyboardType: TextInputType.emailAddress,
+                    controller: _identifiantController,
+                    keyboardType: TextInputType.emailAddress,
                   ),
                   const SizedBox(height: 20),
 
@@ -133,6 +134,27 @@ class _LoginState extends State<Login> {
                         debugPrint(" bouton Se connecter cliquer");
                         debugPrint(" Identifiant: $identifiant");
                         debugPrint(" Mot de passe: $motDePasse");
+                        if (identifiant.isNotEmpty &&
+                            motDePasse.isNotEmpty &&
+                            identifiant == "admin" &&
+                            motDePasse == "admin") {
+                          //navigue vers la page d'accueil
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const MainNavigation(),
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                "Mot de passe ou identifiant incorrect veuillez réessayer",
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF2196F3),
@@ -155,6 +177,12 @@ class _LoginState extends State<Login> {
                   TextButton(
                     onPressed: () {
                       debugPrint(" bouton Mot de passe oublié cliquer");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ForgetMdp(),
+                        ),
+                      );
                     },
                     child: const Text(
                       "Mot de passe oublié ?",

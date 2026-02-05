@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sante_mada/acceuil_login/login/Login.dart';
 import 'package:sante_mada/classes/widgetUtil.dart';
 
 class Inscription extends StatefulWidget {
@@ -49,10 +50,7 @@ class _Inscription extends State<Inscription> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          //onPressed: () => Navigator.of(context).pop(),
-          onPressed: () {
-            debugPrint(" bouton retour cliquer");
-          },
+          onPressed: () => Navigator.of(context).pop(),
         ),
         title: Center(
           child: Text(
@@ -208,6 +206,7 @@ class _Inscription extends State<Inscription> {
                 child: ElevatedButton(
                   onPressed: () {
                     debugPrint("bouton s'inscrire cliquer");
+                    //navigue directe vers le corps de l'appli
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2196F3),
@@ -238,6 +237,10 @@ class _Inscription extends State<Inscription> {
                   TextButton(
                     onPressed: () {
                       debugPrint("bouton se connecter cliquer");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const Login()),
+                      );
                     },
                     style: TextButton.styleFrom(
                       padding: EdgeInsets.zero,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sante_mada/acceuil_login/acceuil/acceuil.dart';
 import 'package:sante_mada/classes/widgetUtil.dart';
 
 class SettingAC extends StatefulWidget {
@@ -45,10 +46,7 @@ class _SettingACState extends State<SettingAC> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => debugPrint("Retour"),
-        ),
+
         title: const Text(
           'Paramètres du Profil',
           style: TextStyle(
@@ -284,6 +282,51 @@ class _SettingACState extends State<SettingAC> {
                   ),
                   child: const Text(
                     "Enregistrer Changement",
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 16),
+              //bouton de deconnexion
+              //  TextButton(
+              //     onPressed: () {
+              //       debugPrint(" bouton deconnexion cliquer");
+              //       Navigator.push(
+              //     context,
+              //     MaterialPageRoute(builder: (context) => const Acceuil()),
+              //   );
+              //     },
+              //     child: const Text(
+              //       "Deconnexion",
+              //       style: TextStyle(color: Color(0xFFB90F0F)),
+              //     ),
+              //   ),
+              SizedBox(
+                width: double.infinity,
+                height: 58,
+                child: ElevatedButton.icon(
+                 
+                  onPressed: () {
+                    debugPrint("bouton deconnexion cliquer");
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Acceuil()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFC40D0D),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                 
+                  icon: const Icon(Icons.logout, color: Colors.white),
+                  label: const Text(
+                    "Deconnexion",
                     style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.bold,

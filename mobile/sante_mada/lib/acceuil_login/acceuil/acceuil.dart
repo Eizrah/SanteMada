@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sante_mada/acceuil_login/inscription/Inscription.dart';
+import 'package:sante_mada/acceuil_login/login/Login.dart';
 
 class Acceuil extends StatelessWidget {
   const Acceuil({super.key});
@@ -89,17 +91,23 @@ class Acceuil extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 17,
-                color: Color(0xFF707E8D), // Gris bleuté de l'image
+                color: Color(0xFF707E8D), 
                 height: 1.4,
               ),
             ),
             const Spacer(flex: 2),
-            // Bouton S'inscrire (Plein)
+            // Bouton S'inscrire 
             SizedBox(
               width: double.infinity,
               height: 58,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  //navigue vers la page d'inscription
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Inscription()),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF2196F3),
                   foregroundColor: Colors.white,
@@ -115,12 +123,18 @@ class Acceuil extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            // Bouton Se connecter (Contourné/Sombre)
+            // Bouton Se connecter 
             SizedBox(
               width: double.infinity,
               height: 58,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  //navigue vers la page de connexion
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Login()),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF1D293C),
                   foregroundColor: Colors.white,
