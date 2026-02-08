@@ -2,6 +2,71 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Ajoute intl dans ton pubspec.yaml pour le formatage de date
 
 /// Widget réutilisable pour un champ de texte normal avec icône
+
+class CustomTextFieldReadOnly extends StatelessWidget {
+  final String label;
+  final String hint;
+  final IconData icon; // Nouvelle icône
+  final TextEditingController? controller;
+final bool readOnly;
+  const CustomTextFieldReadOnly({
+    super.key,
+    required this.label,
+    required this.hint,
+    required this.icon,
+    this.controller,
+    this.readOnly=false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+            fontSize: 16,
+          ),
+        ),
+        const SizedBox(height: 10),
+        TextField(
+          controller: controller,
+          style: const TextStyle(color: Colors.white),
+          decoration: InputDecoration(
+            prefixIcon: Icon(
+              icon,
+              color: const Color(0xFF3E4856),
+            ), // Icône devant le hint
+            hintText: hint,
+            hintStyle: const TextStyle(color: Color(0xFF3E4856)),
+            filled: true,
+            fillColor: const Color(0xFF151C26),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 18,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFF232D3B)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFF2196F3)),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class CustomTextField extends StatelessWidget {
   final String label;
   final String hint;

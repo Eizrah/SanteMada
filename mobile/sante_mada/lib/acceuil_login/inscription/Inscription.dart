@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sante_mada/acceuil_login/login/Login.dart';
 import 'package:sante_mada/classes/widgetUtil.dart';
+import 'package:sante_mada/database/dbLocal.dart';
+import 'package:sante_mada/models/AgentCommunautaire.dart';
+import 'package:uuid/uuid.dart';
 
 class Inscription extends StatefulWidget {
   const Inscription({super.key});
@@ -25,6 +28,13 @@ class _Inscription extends State<Inscription> {
   final TextEditingController _password = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    // Générer automatiquement un NAgent unique à l'initialisation
+    _NAgent.text = const Uuid().v4().substring(0, 8).toUpperCase();
+  }
+
+  @override
   void dispose() {
     //pour liberer les champs
     _numCin.dispose();
@@ -41,6 +51,96 @@ class _Inscription extends State<Inscription> {
     super.dispose();
   }
 
+  Future<void> gererInscription() async {
+    // Liste des champs manquants pour le feedback utilisateur
+    List<String> champsManquants = [];
+
+    if (_nomComplet.text.isEmpty) champsManquants.add("Nom Complet");
+    if (_numCin.text.isEmpty) champsManquants.add("Numéro CIN");
+    if (_age.text.isEmpty) champsManquants.add("Age");
+    if (_dateNaissance.text.isEmpty) champsManquants.add("Date de Naissance");
+    if (_lieuNaissance.text.isEmpty) champsManquants.add("Lieu de Naissance");
+    if (_adresseLocal.text.isEmpty) champsManquants.add("Adresse");
+    // Photo est maintenant optionnel
+    if (_sexe.text.isEmpty) champsManquants.add("Genre");
+    // NAgent est auto-généré, donc on ne vérifie pas s'il est vide ici car il est rempli au démarrage
+    if (_NAgent.text.isEmpty) champsManquants.add("NAgent");
+    if (_lieuTravail.text.isEmpty) champsManquants.add("Lieu de Travail");
+    if (_password.text.isEmpty) champsManquants.add("Mot de passe");
+
+    // Validation supplémentaire
+    if (champsManquants.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Veuillez remplir : ${champsManquants.join(', ')}"),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
+    // Validation du mot de passe
+    if (_password.text.length < 8) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Le mot de passe doit contenir au moins 8 caractères"),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    try {
+      final newAgent = AgentCommunautaire(
+        nAgent: _NAgent.text,
+        lieuTravail: _lieuTravail.text.isEmpty
+            ? "Non spécifié"
+            : _lieuTravail.text,
+        password: _password.text,
+        nCIN: _numCin.text,
+        nomComplet: _nomComplet.text,
+        age: int.tryParse(_age.text) ?? 0,
+        dateNaissance: DateTime.tryParse(_dateNaissance.text) ?? DateTime.now(),
+        lieuNaissance: _lieuNaissance.text,
+        adressLocal: _adresseLocal.text,
+        photo: _photo.text.isEmpty
+            ? ""
+            : _photo.text, // Gestion de la photo vide
+        sexe: _sexe.text,
+      );
+
+      await Dblocal.insertAgentCommunautaire(newAgent);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Inscription réussie !"),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        // Petit délai pour laisser l'utilisateur voir le message de succès
+        await Future.delayed(const Duration(seconds: 1));
+
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const Login()),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Erreur lors de l'inscription : $e"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,13 +152,12 @@ class _Inscription extends State<Inscription> {
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Center(
+        title: const Center(
           child: Text(
             'Créer un compte',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
-        //mettre une petite bordure pour delimiter le appBar et le corps
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -157,6 +256,16 @@ class _Inscription extends State<Inscription> {
               ),
               const SizedBox(height: 16),
 
+              // Lieu de Travail (Ajouté car manquant dans l'UI d'origine mais requis par le modèle)
+              CustomTextField(
+                label: "Lieu de Travail",
+                hint: "Lieu d'exercice",
+                icon: Icons.work_outline,
+                controller: _lieuTravail,
+                keyboardType: TextInputType.text,
+              ),
+              const SizedBox(height: 16),
+
               // Genre
               CustomGenreSelector(label: "Genre", controller: _sexe),
               const SizedBox(height: 16),
@@ -173,7 +282,7 @@ class _Inscription extends State<Inscription> {
 
               // Photo
               CustomTextField(
-                label: "Photo",
+                label: "Photo (Optionnel)",
                 hint: "URL de votre photo",
                 controller: _photo,
                 icon: Icons.photo_camera_outlined,
@@ -181,13 +290,16 @@ class _Inscription extends State<Inscription> {
               ),
               const SizedBox(height: 16),
 
-              // NAgent
-              CustomTextField(
-                label: "NAgent",
-                hint: "Numéro d'agent",
-                icon: Icons.numbers_outlined,
-                controller: _NAgent,
-                keyboardType: TextInputType.number,
+              // NAgent (Lecture seule car auto-généré)
+              AbsorbPointer(
+                absorbing: true,
+                child: CustomTextFieldReadOnly(
+                  label: "NAgent (Auto-généré)",
+                  hint: "Numéro d'agent",
+                  icon: Icons.numbers_outlined,
+                  controller: _NAgent,
+                  readOnly: true,
+                ),
               ),
               const SizedBox(height: 16),
 
@@ -204,10 +316,7 @@ class _Inscription extends State<Inscription> {
                 width: double.infinity,
                 height: 58,
                 child: ElevatedButton(
-                  onPressed: () {
-                    debugPrint("bouton s'inscrire cliquer");
-                    //navigue directe vers le corps de l'appli
-                  },
+                  onPressed: gererInscription,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2196F3),
                     shape: RoundedRectangleBorder(
@@ -236,7 +345,6 @@ class _Inscription extends State<Inscription> {
                   ),
                   TextButton(
                     onPressed: () {
-                      debugPrint("bouton se connecter cliquer");
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => const Login()),

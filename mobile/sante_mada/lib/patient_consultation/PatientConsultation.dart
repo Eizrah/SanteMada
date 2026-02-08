@@ -371,7 +371,7 @@ class _PatientConsultationState extends State<PatientConsultation> {
               ),
               const SizedBox(height: 30),
 
-              // Bouton Enregistrer & Consulter
+              // Bouton Enregistrement
               SizedBox(
                 width: double.infinity,
                 height: 58,
@@ -382,7 +382,7 @@ class _PatientConsultationState extends State<PatientConsultation> {
                   },
                   icon: const Icon(Icons.send, color: Colors.white, size: 20),
                   label: const Text(
-                    "Enregistrer & Consulter",
+                    "Enregistrent local",
                     style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
@@ -397,7 +397,33 @@ class _PatientConsultationState extends State<PatientConsultation> {
                   ),
                 ),
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 15),
+                 SizedBox(
+                width: double.infinity,
+                height: 58,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    debugPrint("Enregistrer & Consulter");
+                    debugPrint("Symptômes: ${_symptomesController.text}");
+                  },
+                  icon: const Icon(Icons.send, color: Colors.white, size: 20),
+                  label: const Text(
+                    "Envoyer aux docteurs",
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(163, 63, 192, 20),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 25),
             ],
           ),
         ),

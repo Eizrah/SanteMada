@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:sante_mada/acceuil_login/mdp_forget/ForgetMdp.dart';
 import 'package:sante_mada/classes/widgetUtil.dart';
+import 'package:sante_mada/database/dbLocal.dart';
 import 'package:sante_mada/navbar/NavBar.dart';
 // import 'package:sante_mada/new_patient/AddPatient.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -12,6 +14,11 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final storage = const FlutterSecureStorage(
+  aOptions: AndroidOptions(
+    encryptedSharedPreferences: true,
+  ),
+);
   // Controllers pour récupérer les valeurs des champs
   final TextEditingController _identifiantController = TextEditingController();
   final TextEditingController _motDePasseController = TextEditingController();
@@ -22,6 +29,37 @@ class _LoginState extends State<Login> {
     _identifiantController.dispose();
     _motDePasseController.dispose();
     super.dispose();
+  }
+
+  Future<void> gererLogin(String nAgent, String mdp) async {
+    try {
+      final ac = await Dblocal.login(nAgent, mdp);
+      if (ac != null) {
+        await storage.write(key: "nAgent", value: ac.nAgent.toString());
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const MainNavigation()),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Connexion reussie"),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Identifiant ou mot de passe incorrect"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      print("erreur: $e");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Une erreur est survenue ")));
+    }
   }
 
   @override
@@ -131,26 +169,12 @@ class _LoginState extends State<Login> {
                         String identifiant = _identifiantController.text;
                         String motDePasse = _motDePasseController.text;
 
-                        debugPrint(" bouton Se connecter cliquer");
-                        debugPrint(" Identifiant: $identifiant");
-                        debugPrint(" Mot de passe: $motDePasse");
-                        if (identifiant.isNotEmpty &&
-                            motDePasse.isNotEmpty &&
-                            identifiant == "admin" &&
-                            motDePasse == "admin") {
-                          //navigue vers la page d'accueil
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const MainNavigation(),
-                            ),
-                          );
+                        if (identifiant.isNotEmpty && motDePasse.isNotEmpty) {
+                          gererLogin(identifiant, motDePasse);
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text(
-                                "Mot de passe ou identifiant incorrect veuillez réessayer",
-                              ),
+                              content: Text("Veuillez remplir tous les champs"),
                               backgroundColor: Colors.red,
                             ),
                           );

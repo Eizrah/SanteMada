@@ -3,7 +3,9 @@ import 'package:sante_mada/acceuil_login/mdp_forget/NewMdp.dart';
 import 'package:sante_mada/classes/widgetUtil.dart';
 
 class VerificationCode extends StatefulWidget {
-  const VerificationCode({super.key});
+  const VerificationCode({super.key, required this.code, required this.nAgent});
+  final int code;
+  final String nAgent;
 
   @override
   State<VerificationCode> createState() => _VerificationCode();
@@ -136,33 +138,62 @@ class _VerificationCode extends State<VerificationCode> {
                 height: 58,
                 child: ElevatedButton(
                   onPressed: () {
-                    //ajouter ici aussi une fonction de verification du code
-                    String code = _codeController.text;
-                    debugPrint("Bouton réinitialiser cliqué");
-                    debugPrint("Numéro Agent: $code");
+                    // Les arguments sont disponibles via widget.code et widget.nAgent
+                    // Nous n'avons pas besoin de ModalRoute.of(context) car ils sont passés au constructeur
 
-                    // Afficher un message de confirmation
-                    if (code.isNotEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            "Un lien de réinitialisation a été envoyé pour l'agent $code",
+                    if (_codeController.text == widget.code.toString()) {
+                      if (widget.nAgent.isNotEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Code valide"),
+                            backgroundColor: Color(0xFF21F34F),
                           ),
-                          backgroundColor: const Color(0xFF2196F3),
-                        ),
-                      );
-                      Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const NewMdp()),
-                      );
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NewMdp(nAgent: widget.nAgent),
+                          ),
+                        );
+                      }
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text("Veuillez entrer votre numéro Agent"),
-                          backgroundColor: Colors.red,
+                          content: Text("Code erroné"),
+                          backgroundColor: Color(0xFFF32121),
                         ),
                       );
                     }
                   },
+                  // onPressed: () {
+                  //   //ajouter ici aussi une fonction de verification du code
+                  //   String code = _codeController.text;
+                  //   debugPrint("Bouton réinitialiser cliqué");
+                  //   debugPrint("Numéro Agent: $code");
+
+                  //   // Afficher un message de confirmation
+                  //   if (code.isNotEmpty) {
+                  //     ScaffoldMessenger.of(context).showSnackBar(
+                  //       SnackBar(
+                  //         content: Text(
+                  //           "Un lien de réinitialisation a été envoyé pour l'agent $code",
+                  //         ),
+                  //         backgroundColor: const Color(0xFF2196F3),
+                  //       ),
+                  //     );
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(builder: (context) => const NewMdp()),
+                  //     );
+                  //   } else {
+                  //     ScaffoldMessenger.of(context).showSnackBar(
+                  //       const SnackBar(
+                  //         content: Text("Veuillez entrer votre numéro Agent"),
+                  //         backgroundColor: Colors.red,
+                  //       ),
+                  //     );
+                  //   }
+                  // },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2196F3),
                     shape: RoundedRectangleBorder(
@@ -181,7 +212,6 @@ class _VerificationCode extends State<VerificationCode> {
               ),
               const SizedBox(height: 30),
 
-             
               const SizedBox(height: 40),
 
               // Footer sécurisé

@@ -1,12 +1,10 @@
-import 'dart:nativewrappers/_internal/vm/lib/ffi_native_type_patch.dart';
-
 import 'package:sante_mada/models/Personne.dart';
 
 class Patient extends Personne {
   String antecedentMaladie;
   String maladieHereditaire;
-  Float poids;
-  Float taille; //en cm
+  double poids;
+  double taille; //en cm
   String numeroAgent;
 
   Patient({
@@ -29,8 +27,8 @@ class Patient extends Personne {
     return Patient(
       antecedentMaladie: json['antecedentMaladie'],
       maladieHereditaire: json['maladieHereditaire'],
-      poids: json['poids'],
-      taille: json['taille'],
+      poids: double.parse(json['poids'].toString()),
+      taille: double.parse(json['taille'].toString()),
       numeroAgent: json['numeroAgent'],
       nCIN: json['nCIN'],
       nomComplet: json['nomComplet'],
@@ -47,8 +45,8 @@ class Patient extends Personne {
     return Patient(
       antecedentMaladie: map['antecedentMaladie'],
       maladieHereditaire: map['maladieHereditaire'],
-      poids: map['poids'],
-      taille: map['taille'],
+      poids: double.parse(map['poids'].toString()),
+      taille: double.parse(map['taille'].toString()),
       numeroAgent: map['numeroAgent'],
       nCIN: map['nCIN'],
       nomComplet: map['nomComplet'],

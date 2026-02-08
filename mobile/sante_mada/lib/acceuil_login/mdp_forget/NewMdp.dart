@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:sante_mada/acceuil_login/login/Login.dart';
 import 'package:sante_mada/classes/widgetUtil.dart';
+import 'package:sante_mada/database/dbLocal.dart';
 
 class NewMdp extends StatefulWidget {
-  const NewMdp({super.key});
-
+  const NewMdp({super.key, required this.nAgent});
+  final String nAgent;
   @override
   State<NewMdp> createState() => _NewMdp();
 }
@@ -145,7 +146,10 @@ class _NewMdp extends State<NewMdp> {
                 width: double.infinity,
                 height: 58,
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    // Les arguments sont disponibles via widget.nAgent
+                    final Nagent = widget.nAgent;
+
                     //ajouter ici aussi une fonction de verification du code
                     String newMdp = _newMdpController.text;
                     String MdpVerification = _MdpVerificationController.text;
@@ -153,16 +157,28 @@ class _NewMdp extends State<NewMdp> {
                     debugPrint("Mot de passe 2: $MdpVerification");
 
                     // Afficher un message de confirmation
-                    if (newMdp.isNotEmpty && MdpVerification.isNotEmpty && newMdp == MdpVerification) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            "Un lien de réinitialisation a été envoyé pour l'agent $newMdp",
+                    if (newMdp.isNotEmpty &&
+                        MdpVerification.isNotEmpty &&
+                        newMdp == MdpVerification) {
+                      await Dblocal.MajPassword(Nagent, newMdp);
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              "Mot de passe réinitialisé avec succès",
+                            ),
+                            backgroundColor: Color(0xFF21F328),
                           ),
-                          backgroundColor: const Color(0xFF2196F3),
-                        ),
-                      );
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const Login()));
+                        );
+                        // Naviguer vers Login et retirer toutes les routes précédentes de la pile
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const Login(),
+                          ),
+                          (route) => false,
+                        );
+                      }
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(

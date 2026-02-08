@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:sante_mada/acceuil_login/mdp_forget/VerificationCode.dart';
 import 'package:sante_mada/classes/widgetUtil.dart';
+import 'package:sante_mada/database/dbLocal.dart';
 
 class ForgetMdp extends StatefulWidget {
   const ForgetMdp({super.key});
@@ -135,36 +138,66 @@ class _ForgetMdpState extends State<ForgetMdp> {
                 width: double.infinity,
                 height: 58,
                 child: ElevatedButton(
-                  onPressed: () {
-                    //ici la logic pour verifier le  que le code genere == à la valeur entrer par l'user
-                    String numAgent = _numAgentController.text;
-                    debugPrint("Bouton réinitialiser cliqué");
-                    debugPrint("Numéro Agent: $numAgent");
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const VerificationCode(),
-                      ),
-                    );
-                    // Afficher un message de confirmation
-                    if (numAgent.isNotEmpty) {
+                  onPressed: ()async{
+                    bool existence = await Dblocal.acExist(_numAgentController.text.trim());
+                    if (existence){
+                      final random = Random();
+                      final codeGenerer = random.nextInt(900000) + 100000;
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(
-                            "Un lien de réinitialisation a été envoyé pour l'agent $numAgent",
-                          ),
+                          content: Text("Code de verification: $codeGenerer"),
                           backgroundColor: const Color(0xFF2196F3),
                         ),
                       );
-                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => VerificationCode(
+                            code: codeGenerer,
+                            nAgent: _numAgentController.text,
+                          ),
+                        ),
+                        
+                      );
+                    }else{
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Veuillez entrer votre numéro Agent"),
-                          backgroundColor: Colors.red,
+                        SnackBar(
+                          content: Text("Numéro Agent non existant"),
+                          backgroundColor: const Color.fromARGB(255, 243, 93, 33),
                         ),
                       );
                     }
                   },
+                  // onPressed: () {
+                  //   //ici la logic pour verifier le  que le code genere == à la valeur entrer par l'user
+                  //   String numAgent = _numAgentController.text;
+                  //   debugPrint("Bouton réinitialiser cliqué");
+                  //   debugPrint("Numéro Agent: $numAgent");
+                  //   Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //       builder: (context) => const VerificationCode(),
+                  //     ),
+                  //   );
+                  //   // Afficher un message de confirmation
+                  //   if (numAgent.isNotEmpty) {
+                  //     ScaffoldMessenger.of(context).showSnackBar(
+                  //       SnackBar(
+                  //         content: Text(
+                  //           "Un lien de réinitialisation a été envoyé pour l'agent $numAgent",
+                  //         ),
+                  //         backgroundColor: const Color(0xFF2196F3),
+                  //       ),
+                  //     );
+                  //   } else {
+                  //     ScaffoldMessenger.of(context).showSnackBar(
+                  //       const SnackBar(
+                  //         content: Text("Veuillez entrer votre numéro Agent"),
+                  //         backgroundColor: Colors.red,
+                  //       ),
+                  //     );
+                  //   }
+                  // },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2196F3),
                     shape: RoundedRectangleBorder(

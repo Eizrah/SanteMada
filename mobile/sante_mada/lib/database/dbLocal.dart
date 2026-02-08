@@ -138,6 +138,7 @@ sexe varchar(50)
 )
 ''');
       },
+      version: 1,
     );
   }
 
@@ -211,6 +212,20 @@ sexe varchar(50)
     await db.insert('Demande', demande.toMap());
   }
 
+  //login
+  static Future<AgentCommunautaire?> login(String nAgent, String mdp) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'AgentCommunautaire',
+      where: 'nAgent = ? AND password = ?',
+      whereArgs: [nAgent, mdp],
+    );
+    if (maps.isNotEmpty) {
+      return AgentCommunautaire.fromMap(maps.first);
+    }
+    return null;
+  }
+
   //recuperation des infos de "un AC"
 
   static Future<AgentCommunautaire?> getAgentCommunautaire(
@@ -233,5 +248,29 @@ sexe varchar(50)
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query('Prescription');
     return maps.map((e) => Prescription.fromMap(e)).toList();
+  }
+
+  static Future <bool> acExist(String nAgent) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'AgentCommunautaire',
+      where: 'nAgent = ?',
+      whereArgs: [nAgent],
+    );
+    if (maps.isEmpty) {
+      return false;
+    }
+    return true;
+  }
+
+  //MAJ password
+  static Future<void> MajPassword(String nAgent, String mdp) async {
+    final db = await database;
+    await db.update(
+      'AgentCommunautaire',
+      {'password': mdp},
+      where: 'nAgent = ?',
+      whereArgs: [nAgent],
+    );
   }
 }
