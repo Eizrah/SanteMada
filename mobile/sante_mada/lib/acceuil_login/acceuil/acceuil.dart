@@ -151,7 +151,7 @@ class Acceuil extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 40),
-            // Version en bas
+           
             const Text(
               "VERSION 1.0.0",
               style: TextStyle(

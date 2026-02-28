@@ -13,7 +13,7 @@ class Inscription extends StatefulWidget {
 }
 
 class _Inscription extends State<Inscription> {
-  //controller de recuperation de données
+ 
   final TextEditingController _numCin = TextEditingController();
   final TextEditingController _nomComplet = TextEditingController();
   final TextEditingController _age = TextEditingController();
@@ -22,8 +22,7 @@ class _Inscription extends State<Inscription> {
   final TextEditingController _adresseLocal = TextEditingController();
   final TextEditingController _photo = TextEditingController();
   final TextEditingController _sexe = TextEditingController();
-  final TextEditingController _NAgent =
-      TextEditingController(); //generer automatiquement
+  final TextEditingController _NAgent =  TextEditingController(); //generer automatiquement
   final TextEditingController _lieuTravail = TextEditingController();
   final TextEditingController _password = TextEditingController();
 
@@ -61,7 +60,7 @@ class _Inscription extends State<Inscription> {
     if (_dateNaissance.text.isEmpty) champsManquants.add("Date de Naissance");
     if (_lieuNaissance.text.isEmpty) champsManquants.add("Lieu de Naissance");
     if (_adresseLocal.text.isEmpty) champsManquants.add("Adresse");
-    // Photo est maintenant optionnel
+    // Photo optionnel
     if (_sexe.text.isEmpty) champsManquants.add("Genre");
     // NAgent est auto-généré, donc on ne vérifie pas s'il est vide ici car il est rempli au démarrage
     if (_NAgent.text.isEmpty) champsManquants.add("NAgent");

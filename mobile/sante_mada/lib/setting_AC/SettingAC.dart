@@ -1,4 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:sante_mada/acceuil_login/acceuil/acceuil.dart';
 import 'package:sante_mada/classes/widgetUtil.dart';
 
@@ -10,6 +13,49 @@ class SettingAC extends StatefulWidget {
 }
 
 class _SettingACState extends State<SettingAC> {
+  bool _isConnected = true;
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+  String _selectedLanguage = 'Français';
+  final List<Map<String, String>> _languages = [
+    {'code': 'fr', 'name': 'Français', 'flag': '🇫🇷'},
+    {'code': 'en', 'name': 'English', 'flag': '🇬🇧'},
+    {'code': 'mg', 'name': 'Malagasy', 'flag': '🇲🇬'},
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _initConnectivity();
+  }
+
+  Future<void> _initConnectivity() async {
+    try {
+      final results = await Connectivity().checkConnectivity();
+      if (mounted) {
+        setState(() {
+          _isConnected =
+              results.isNotEmpty && !results.contains(ConnectivityResult.none);
+        });
+      }
+      _connectivitySubscription = Connectivity().onConnectivityChanged.listen((
+        results,
+      ) {
+        if (mounted) {
+          setState(() {
+            _isConnected =
+                results.isNotEmpty &&
+                !results.contains(ConnectivityResult.none);
+          });
+        }
+      });
+    } on MissingPluginException catch (_) {
+      debugPrint('Connectivity plugin not available on this platform');
+      if (mounted) {
+        setState(() => _isConnected = false);
+      }
+    }
+  }
+
   // Controllers pour les champs (mêmes que Inscription.dart)
   final TextEditingController _numCin = TextEditingController();
   final TextEditingController _nomComplet = TextEditingController();
@@ -25,6 +71,7 @@ class _SettingACState extends State<SettingAC> {
 
   @override
   void dispose() {
+    _connectivitySubscription?.cancel();
     _numCin.dispose();
     _nomComplet.dispose();
     _age.dispose();
@@ -46,7 +93,6 @@ class _SettingACState extends State<SettingAC> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-
         title: const Text(
           'Paramètres du Profil',
           style: TextStyle(
@@ -56,6 +102,44 @@ class _SettingACState extends State<SettingAC> {
           ),
         ),
         centerTitle: true,
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: _isConnected
+                  ? const Color(0xFF1A3A2A)
+                  : const Color(0xFF3A1A1A),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _isConnected
+                        ? const Color(0xFF4CAF50)
+                        : const Color(0xFFE53935),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  _isConnected ? 'En ligne' : 'Hors ligne',
+                  style: TextStyle(
+                    color: _isConnected
+                        ? const Color(0xFF4CAF50)
+                        : const Color(0xFFE53935),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -239,6 +323,82 @@ class _SettingACState extends State<SettingAC> {
               ),
               const SizedBox(height: 24),
 
+              // Sélecteur de langue
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Langue / Language",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF151C26),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFF232D3B)),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _selectedLanguage,
+                        isExpanded: true,
+                        dropdownColor: const Color(0xFF151C26),
+                        icon: const Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Color(0xFF7B8A9E),
+                        ),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                        ),
+                        items: _languages.map((lang) {
+                          return DropdownMenuItem<String>(
+                            value: lang['name'],
+                            child: Row(
+                              children: [
+                                Text(
+                                  lang['flag']!,
+                                  style: const TextStyle(fontSize: 20),
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  lang['name']!,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '(${lang['code']!.toUpperCase()})',
+                                  style: const TextStyle(
+                                    color: Color(0xFF7B8A9E),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          if (value != null) {
+                            setState(() => _selectedLanguage = value);
+                            debugPrint("Langue sélectionnée: $value");
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
               // Message de synchronisation
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -309,7 +469,6 @@ class _SettingACState extends State<SettingAC> {
                 width: double.infinity,
                 height: 58,
                 child: ElevatedButton.icon(
-                 
                   onPressed: () {
                     debugPrint("bouton deconnexion cliquer");
                     Navigator.push(
@@ -323,7 +482,7 @@ class _SettingACState extends State<SettingAC> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                 
+
                   icon: const Icon(Icons.logout, color: Colors.white),
                   label: const Text(
                     "Deconnexion",

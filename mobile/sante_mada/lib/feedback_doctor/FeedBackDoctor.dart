@@ -1,4 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class FeedBackDoctor extends StatefulWidget {
   const FeedBackDoctor({super.key});
@@ -8,6 +11,49 @@ class FeedBackDoctor extends StatefulWidget {
 }
 
 class _FeedBackDoctorState extends State<FeedBackDoctor> {
+  bool _isConnected = true;
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _initConnectivity();
+  }
+
+  Future<void> _initConnectivity() async {
+    try {
+      final results = await Connectivity().checkConnectivity();
+      if (mounted) {
+        setState(() {
+          _isConnected =
+              results.isNotEmpty && !results.contains(ConnectivityResult.none);
+        });
+      }
+      _connectivitySubscription = Connectivity().onConnectivityChanged.listen((
+        results,
+      ) {
+        if (mounted) {
+          setState(() {
+            _isConnected =
+                results.isNotEmpty &&
+                !results.contains(ConnectivityResult.none);
+          });
+        }
+      });
+    } on MissingPluginException catch (_) {
+      debugPrint('Connectivity plugin not available on this platform');
+      if (mounted) {
+        setState(() => _isConnected = false);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription?.cancel();
+    super.dispose();
+  }
+
   // Données simulées des feedbacks
   final List<Map<String, dynamic>> feedbacks = [
     {
@@ -80,16 +126,44 @@ class _FeedBackDoctorState extends State<FeedBackDoctor> {
             fontSize: 18,
           ),
         ),
-        // actions: [
-        //   IconButton(
-        //     icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-        //     onPressed: () {},
-        //   ),
-        //   IconButton(
-        //     icon: const Icon(Icons.search, color: Colors.white),
-        //     onPressed: () {},
-        //   ),
-        // ],
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: _isConnected
+                  ? const Color(0xFF1A3A2A)
+                  : const Color(0xFF3A1A1A),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _isConnected
+                        ? const Color(0xFF4CAF50)
+                        : const Color(0xFFE53935),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  _isConnected ? 'En ligne' : 'Hors ligne',
+                  style: TextStyle(
+                    color: _isConnected
+                        ? const Color(0xFF4CAF50)
+                        : const Color(0xFFE53935),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(

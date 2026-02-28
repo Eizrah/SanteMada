@@ -47,16 +47,16 @@ class _PatientConsultationState extends State<PatientConsultation> {
             fontSize: 18,
           ),
         ),
-        // actions: [
-        //   IconButton(
-        //     icon: const Icon(Icons.cloud_off, color: Color(0xFF2196F3)),
-        //     onPressed: () => debugPrint("Sync status"),
-        //   ),
-        //   IconButton(
-        //     icon: const Icon(Icons.more_vert, color: Colors.white),
-        //     onPressed: () => debugPrint("More options"),
-        //   ),
-        // ],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.cloud_off, color: Color(0xFF2196F3)),
+            onPressed: () => debugPrint("Sync status"),
+          ),
+          // IconButton(
+          //   icon: const Icon(Icons.more_vert, color: Colors.white),
+          //   onPressed: () => debugPrint("More options"),
+          // ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -398,32 +398,7 @@ class _PatientConsultationState extends State<PatientConsultation> {
                 ),
               ),
               const SizedBox(height: 15),
-                 SizedBox(
-                width: double.infinity,
-                height: 58,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    debugPrint("Enregistrer & Consulter");
-                    debugPrint("Symptômes: ${_symptomesController.text}");
-                  },
-                  icon: const Icon(Icons.send, color: Colors.white, size: 20),
-                  label: const Text(
-                    "Envoyer aux docteurs",
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(163, 63, 192, 20),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 25),
+              
             ],
           ),
         ),

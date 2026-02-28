@@ -7,6 +7,8 @@ class Patient extends Personne {
   double taille; //en cm
   String numeroAgent;
 
+
+
   Patient({
     required this.antecedentMaladie,
     required this.maladieHereditaire,
@@ -22,6 +24,7 @@ class Patient extends Personne {
     required super.photo,
     required super.sexe,
   });
+
 
   factory Patient.fromJson(Map<String, dynamic> json) {
     return Patient(

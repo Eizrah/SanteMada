@@ -3,6 +3,7 @@ import 'package:sante_mada/new_patient/AddPatient.dart';
 import 'package:sante_mada/patient_consultation/PatientConsultation.dart';
 import 'package:sante_mada/feedback_doctor/FeedBackDoctor.dart';
 import 'package:sante_mada/Demande_Special/DemandeSpecial.dart';
+import 'package:sante_mada/recap/Recap.dart';
 import 'package:sante_mada/setting_AC/SettingAC.dart';
 
 /// Widget de navigation principale avec BottomNavigationBar
@@ -25,7 +26,8 @@ class _MainNavigationState extends State<MainNavigation> {
     const PatientConsultation(), // Patient (index 1)
     const FeedBackDoctor(), // Prescription (index 2)
     const DemandeSpecial(), // Demande (index 3)
-    const SettingAC(), // Setting (index 4)
+    const Recap(), // Recap (index 4)
+    const SettingAC(), // Setting (index 5)
   ];
 
   @override
@@ -76,6 +78,11 @@ class _MainNavigationState extends State<MainNavigation> {
               icon: Icon(Icons.inventory_2_outlined),
               activeIcon: Icon(Icons.inventory_2),
               label: 'Demande',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.summarize_outlined),
+              activeIcon: Icon(Icons.summarize),
+              label: 'Recap',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.settings_outlined),
@@ -137,6 +144,11 @@ class CustomBottomNavBar extends StatelessWidget {
             icon: Icon(Icons.inventory_2_outlined),
             activeIcon: Icon(Icons.inventory_2),
             label: 'Demande',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.summarize_outlined),
+            activeIcon: Icon(Icons.summarize),
+            label: 'Recap',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings_outlined),

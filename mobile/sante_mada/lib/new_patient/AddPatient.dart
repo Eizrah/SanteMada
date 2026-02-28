@@ -1,5 +1,10 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:sante_mada/classes/widgetUtil.dart';
+import 'package:sante_mada/database/dbLocal.dart';
+import 'package:sante_mada/models/Patient.dart';
 
 class AddPatient extends StatefulWidget {
   const AddPatient({super.key});
@@ -9,11 +14,47 @@ class AddPatient extends StatefulWidget {
 }
 
 class _AddPatient extends State<AddPatient> {
-  // Controllers pour récupérer les données
+  bool _isConnected = true;
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _initConnectivity();
+  }
+
+  Future<void> _initConnectivity() async {
+    try {
+      final results = await Connectivity().checkConnectivity();
+      if (mounted) {
+        setState(() {
+          _isConnected =
+              results.isNotEmpty && !results.contains(ConnectivityResult.none);
+        });
+      }
+      _connectivitySubscription = Connectivity().onConnectivityChanged.listen((
+        results,
+      ) {
+        if (mounted) {
+          setState(() {
+            _isConnected =
+                results.isNotEmpty &&
+                !results.contains(ConnectivityResult.none);
+          });
+        }
+      });
+    } on MissingPluginException catch (_) {
+      debugPrint('Connectivity plugin not available on this platform');
+      if (mounted) {
+        setState(() => _isConnected = false);
+      }
+    }
+  }
+
   final TextEditingController _numCin = TextEditingController();
   final TextEditingController _nomComplet = TextEditingController();
   final TextEditingController _age = TextEditingController();
-  final TextEditingController _dateNaissance = TextEditingController();
+  late final TextEditingController _dateNaissance = TextEditingController();
   final TextEditingController _lieuNaissance = TextEditingController();
   final TextEditingController _adresseLocal = TextEditingController();
   final TextEditingController _photo = TextEditingController();
@@ -23,8 +64,80 @@ class _AddPatient extends State<AddPatient> {
   final TextEditingController _taille = TextEditingController();
   final TextEditingController _poids = TextEditingController();
 
+  Future<void> ajoutPatient() async {
+    List<String> dataPatient = [];
+    if (_numCin.text.isEmpty) dataPatient.add("Num cin est obligatoire");
+    if (_nomComplet.text.isEmpty)
+      dataPatient.add("Nom complet est obligatoire");
+    if (_age.text.isEmpty) dataPatient.add("Age est obligatoire");
+    if (_dateNaissance.text.isEmpty)
+      dataPatient.add("Date de naissance est obligatoire");
+    if (_lieuNaissance.text.isEmpty)
+      dataPatient.add("Lieu de naissance est obligatoire");
+    if (_adresseLocal.text.isEmpty)
+      dataPatient.add("Adresse locale est obligatoire");
+    if (_photo.text.isEmpty) dataPatient.add("Photo est obligatoire");
+    if (_sexe.text.isEmpty) dataPatient.add("Sexe est obligatoire");
+    if (_antecedentMaladie.text.isEmpty)
+      dataPatient.add("Antecedent maladie est obligatoire");
+    if (_maladieHereditaire.text.isEmpty)
+      dataPatient.add("Maladie hereditaire est obligatoire");
+    if (_taille.text.isEmpty) dataPatient.add("Taille est obligatoire");
+    if (_poids.text.isEmpty) dataPatient.add("Poids est obligatoire");
+
+    if (dataPatient.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Veuillez remplir : ${dataPatient.join(', ')}"),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
+    try {
+      final newPatient = Patient(
+        antecedentMaladie: _antecedentMaladie.text,
+        maladieHereditaire: _maladieHereditaire.text,
+        poids: double.tryParse(_poids.text) ?? 0,
+        taille: double.tryParse(_taille.text) ?? 0,
+        numeroAgent: '',
+        nCIN: _numCin.text,
+        nomComplet: _nomComplet.text,
+        age: int.tryParse(_age.text) ?? 0,
+        dateNaissance: DateTime.parse(_dateNaissance.text),
+        lieuNaissance: _lieuNaissance.text,
+        adressLocal: _adresseLocal.text,
+        photo: _photo.text.isEmpty ? "" : _photo.text,
+        sexe: _sexe.text,
+      );
+      await Dblocal.insertPatient(newPatient);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Ajout réussi !"),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        await Future.delayed(const Duration(seconds: 1));
+
+        
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Erreur : $e"),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+    }
+  }
+
   @override
   void dispose() {
+    _connectivitySubscription?.cancel();
     _numCin.dispose();
     _nomComplet.dispose();
     _age.dispose();
@@ -57,6 +170,44 @@ class _AddPatient extends State<AddPatient> {
           ),
         ),
         centerTitle: true,
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: _isConnected
+                  ? const Color(0xFF1A3A2A)
+                  : const Color(0xFF3A1A1A),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _isConnected
+                        ? const Color(0xFF4CAF50)
+                        : const Color(0xFFE53935),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  _isConnected ? 'En ligne' : 'Hors ligne',
+                  style: TextStyle(
+                    color: _isConnected
+                        ? const Color(0xFF4CAF50)
+                        : const Color(0xFFE53935),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -311,6 +462,7 @@ class _AddPatient extends State<AddPatient> {
                 height: 58,
                 child: ElevatedButton.icon(
                   onPressed: () {
+                    ajoutPatient();
                     debugPrint("bouton enregistrer patient cliquer");
                   },
                   icon: const Icon(Icons.save, color: Colors.white),
