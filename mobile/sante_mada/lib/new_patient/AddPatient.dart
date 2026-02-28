@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:sante_mada/classes/widgetUtil.dart';
 import 'package:sante_mada/database/dbLocal.dart';
+import 'package:sante_mada/fonction/prendrePhoto.dart';
 import 'package:sante_mada/models/Patient.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddPatient extends StatefulWidget {
   const AddPatient({super.key});
@@ -122,8 +125,6 @@ class _AddPatient extends State<AddPatient> {
         );
 
         await Future.delayed(const Duration(seconds: 1));
-
-        
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -255,7 +256,15 @@ class _AddPatient extends State<AddPatient> {
               // Photo du Patient
               Center(
                 child: GestureDetector(
-                  onTap: () => debugPrint("Capture photo cliquée"),
+                  onTap: () async {
+                    XFile? photo = await prendrePhoto(context);
+                    if (!mounted) return;
+                    if (photo != null) {
+                      setState(() {
+                        _photo.text = photo.path;
+                      });
+                    }
+                  },
                   child: Column(
                     children: [
                       Stack(
@@ -267,21 +276,28 @@ class _AddPatient extends State<AddPatient> {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: const Color(0xFFD4B896),
+                                color: _photo.text.isNotEmpty
+                                    ? const Color(0xFF2196F3)
+                                    : const Color(0xFFD4B896),
                                 width: 3,
                               ),
                             ),
-                            child: Container(
-                              margin: const EdgeInsets.all(6),
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Color(0xFF1A2836),
-                              ),
-                              child: const Icon(
-                                Icons.person,
-                                size: 50,
-                                color: Color(0xFF3E4856),
-                              ),
+                            child: ClipOval(
+                              child: _photo.text.isNotEmpty
+                                  ? Image.file(
+                                      File(_photo.text),
+                                      width: 100,
+                                      height: 100,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Container(
+                                      color: const Color(0xFF1A2836),
+                                      child: const Icon(
+                                        Icons.person,
+                                        size: 50,
+                                        color: Color(0xFF3E4856),
+                                      ),
+                                    ),
                             ),
                           ),
                           Positioned(
