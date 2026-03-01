@@ -1,4 +1,4 @@
-import 'package:sante_mada/feedback_doctor/FeedBackDoctor.dart';
+import 'package:sante_mada/screen/feedback_doctor/FeedBackDoctor.dart';
 import 'package:sante_mada/models/Prescription.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sante_mada/models/AgentCommunautaire.dart';
@@ -44,12 +44,12 @@ sexe varchar(50)
 ''');
         await db.execute('''
 CREATE TABLE Consultation(
-idConsultation varchar(50) PRIMARY KEY,
-dateConsultation varchar(50),
+idConsultation varchar(500) PRIMARY KEY,
+dateConsultation Datetime,
 prescription varchar(50),
 descMaladie varchar(50),
 nCINPatient varchar(50),
-numMatriculMedecin varchar(50),
+numMatriculMedecin varchar(50) null,
 isSynced int,
 foreign key (nCINPatient) references Patient(nCIN),
 foreign key (numMatriculMedecin) references Medecin(numMatriculMedecin)
@@ -194,6 +194,18 @@ sexe varchar(50)
     return maps.map((e) => Patient.fromMap(e)).toList();
   }
 
+  // Recherche de patients par nom complet (insensible à la casse)
+  static Future<List<Patient>> searchPatientsByNom(String nom) async {
+    final db = await database;
+    if (nom.trim().isEmpty) return [];
+    final List<Map<String, dynamic>> maps = await db.query(
+      'Patient',
+      where: 'nomComplet LIKE ?',
+      whereArgs: ['%$nom%'],
+    );
+    return maps.map((e) => Patient.fromMap(e)).toList();
+  }
+
   //ajout d'une consultation
   static Future<void> insertConsultation(Consultation consultation) async {
     final db = await database;
@@ -250,7 +262,7 @@ sexe varchar(50)
     return maps.map((e) => Prescription.fromMap(e)).toList();
   }
 
-  static Future <bool> acExist(String nAgent) async {
+  static Future<bool> acExist(String nAgent) async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
       'AgentCommunautaire',

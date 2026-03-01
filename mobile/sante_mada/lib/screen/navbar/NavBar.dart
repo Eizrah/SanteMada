@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:sante_mada/new_patient/AddPatient.dart';
-import 'package:sante_mada/patient_consultation/PatientConsultation.dart';
-import 'package:sante_mada/feedback_doctor/FeedBackDoctor.dart';
-import 'package:sante_mada/Demande_Special/DemandeSpecial.dart';
-import 'package:sante_mada/recap/Recap.dart';
-import 'package:sante_mada/setting_AC/SettingAC.dart';
+import 'package:sante_mada/screen/new_patient/AddPatient.dart';
+import 'package:sante_mada/screen/patient_consultation/PatientConsultation.dart';
+import 'package:sante_mada/screen/feedback_doctor/FeedBackDoctor.dart';
+import 'package:sante_mada/screen/Demande_Special/DemandeSpecial.dart';
+import 'package:sante_mada/screen/recap/Recap.dart';
+import 'package:sante_mada/screen/setting_AC/SettingAC.dart';
 
 /// Widget de navigation principale avec BottomNavigationBar
 /// Affiche les onglets: Home, Patient, Prescription, Demande, Setting

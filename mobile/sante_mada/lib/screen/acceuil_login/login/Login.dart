@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sante_mada/acceuil_login/mdp_forget/ForgetMdp.dart';
+import 'package:sante_mada/screen/acceuil_login/mdp_forget/ForgetMdp.dart';
 import 'package:sante_mada/classes/widgetUtil.dart';
 import 'package:sante_mada/database/dbLocal.dart';
-import 'package:sante_mada/navbar/NavBar.dart';
+import 'package:sante_mada/screen/navbar/NavBar.dart';
 // import 'package:sante_mada/new_patient/AddPatient.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 

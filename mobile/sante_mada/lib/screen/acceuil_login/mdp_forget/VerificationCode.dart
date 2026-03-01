@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sante_mada/acceuil_login/mdp_forget/NewMdp.dart';
+import 'package:sante_mada/screen/acceuil_login/mdp_forget/NewMdp.dart';
 import 'package:sante_mada/classes/widgetUtil.dart';
 
 class VerificationCode extends StatefulWidget {

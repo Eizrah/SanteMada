@@ -1,24 +1,24 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:sante_mada/acceuil_login/login/Login.dart';
+import 'package:sante_mada/screen/acceuil_login/mdp_forget/VerificationCode.dart';
 import 'package:sante_mada/classes/widgetUtil.dart';
 import 'package:sante_mada/database/dbLocal.dart';
 
-class NewMdp extends StatefulWidget {
-  const NewMdp({super.key, required this.nAgent});
-  final String nAgent;
+class ForgetMdp extends StatefulWidget {
+  const ForgetMdp({super.key});
+
   @override
-  State<NewMdp> createState() => _NewMdp();
+  State<ForgetMdp> createState() => _ForgetMdpState();
 }
 
-class _NewMdp extends State<NewMdp> {
+class _ForgetMdpState extends State<ForgetMdp> {
   // Controller pour récupérer la valeur du champ numéro agent
-  final TextEditingController _newMdpController = TextEditingController();
-  final TextEditingController _MdpVerificationController =
-      TextEditingController();
+  final TextEditingController _numAgentController = TextEditingController();
+
   @override
   void dispose() {
-    _newMdpController.dispose();
-    _MdpVerificationController.dispose();
+    _numAgentController.dispose();
     super.dispose();
   }
 
@@ -114,7 +114,7 @@ class _NewMdp extends State<NewMdp> {
 
               // Description
               const Text(
-                "Saisissez maintenant votre nouveau mot de passe",
+                "Saisissez votre numéro Agent associé à votre compte santé pour recevoir un lien de réinitialisation sécurisé.",
                 style: TextStyle(
                   fontSize: 15,
                   color: Color(0xFF7B8A9E),
@@ -123,21 +123,13 @@ class _NewMdp extends State<NewMdp> {
               ),
               const SizedBox(height: 40),
 
-              //mot de passe
-              CustomPasswordField(
-                label: "Nouveau mot de passe",
-                hint: "Ex: ********",
-
-                controller: _newMdpController,
-              ),
-              const SizedBox(height: 30),
-
-              //mot de passe verification
-              CustomPasswordField(
-                label: "Confirmer le mot de passe",
-                hint: "Ex: ********",
-
-                controller: _MdpVerificationController,
+              // Champ Numéro Agent
+              CustomTextField(
+                label: "Numéro Agent",
+                hint: "Ex: AG12345",
+                icon: Icons.badge_outlined,
+                controller: _numAgentController,
+                keyboardType: TextInputType.text,
               ),
               const SizedBox(height: 30),
 
@@ -146,48 +138,66 @@ class _NewMdp extends State<NewMdp> {
                 width: double.infinity,
                 height: 58,
                 child: ElevatedButton(
-                  onPressed: () async {
-                    // Les arguments sont disponibles via widget.nAgent
-                    final Nagent = widget.nAgent;
-
-                    //ajouter ici aussi une fonction de verification du code
-                    String newMdp = _newMdpController.text;
-                    String MdpVerification = _MdpVerificationController.text;
-                    debugPrint("Mot de passe 1: $newMdp");
-                    debugPrint("Mot de passe 2: $MdpVerification");
-
-                    // Afficher un message de confirmation
-                    if (newMdp.isNotEmpty &&
-                        MdpVerification.isNotEmpty &&
-                        newMdp == MdpVerification) {
-                      await Dblocal.MajPassword(Nagent, newMdp);
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              "Mot de passe réinitialisé avec succès",
-                            ),
-                            backgroundColor: Color(0xFF21F328),
-                          ),
-                        );
-                        // Naviguer vers Login et retirer toutes les routes précédentes de la pile
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const Login(),
-                          ),
-                          (route) => false,
-                        );
-                      }
-                    } else {
+                  onPressed: ()async{
+                    bool existence = await Dblocal.acExist(_numAgentController.text.trim());
+                    if (existence){
+                      final random = Random();
+                      final codeGenerer = random.nextInt(900000) + 100000;
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Veuillez Verifier votre mot de passe"),
-                          backgroundColor: Colors.red,
+                        SnackBar(
+                          content: Text("Code de verification: $codeGenerer"),
+                          backgroundColor: const Color(0xFF2196F3),
+                        ),
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => VerificationCode(
+                            code: codeGenerer,
+                            nAgent: _numAgentController.text,
+                          ),
+                        ),
+                        
+                      );
+                    }else{
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Numéro Agent non existant"),
+                          backgroundColor: const Color.fromARGB(255, 243, 93, 33),
                         ),
                       );
                     }
                   },
+                  // onPressed: () {
+                  //   //ici la logic pour verifier le  que le code genere == à la valeur entrer par l'user
+                  //   String numAgent = _numAgentController.text;
+                  //   debugPrint("Bouton réinitialiser cliqué");
+                  //   debugPrint("Numéro Agent: $numAgent");
+                  //   Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //       builder: (context) => const VerificationCode(),
+                  //     ),
+                  //   );
+                  //   // Afficher un message de confirmation
+                  //   if (numAgent.isNotEmpty) {
+                  //     ScaffoldMessenger.of(context).showSnackBar(
+                  //       SnackBar(
+                  //         content: Text(
+                  //           "Un lien de réinitialisation a été envoyé pour l'agent $numAgent",
+                  //         ),
+                  //         backgroundColor: const Color(0xFF2196F3),
+                  //       ),
+                  //     );
+                  //   } else {
+                  //     ScaffoldMessenger.of(context).showSnackBar(
+                  //       const SnackBar(
+                  //         content: Text("Veuillez entrer votre numéro Agent"),
+                  //         backgroundColor: Colors.red,
+                  //       ),
+                  //     );
+                  //   }
+                  // },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2196F3),
                     shape: RoundedRectangleBorder(
@@ -195,7 +205,7 @@ class _NewMdp extends State<NewMdp> {
                     ),
                   ),
                   child: const Text(
-                    "Enregistrer le nouveau mot de passe",
+                    "Generer le code",
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -206,6 +216,34 @@ class _NewMdp extends State<NewMdp> {
               ),
               const SizedBox(height: 30),
 
+              // Lien "Vous n'avez pas reçu le lien ?"
+              Center(
+                child: Column(
+                  children: [
+                    const Text(
+                      "Vous n'avez pas reçu le code ?",
+                      style: TextStyle(fontSize: 14, color: Color(0xFF7B8A9E)),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        debugPrint("Bouton Renvoyer le code cliqué");
+                      },
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: const Text(
+                        "Renvoyer le code",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Color(0xFF2196F3),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               const SizedBox(height: 40),
 
               // Footer sécurisé

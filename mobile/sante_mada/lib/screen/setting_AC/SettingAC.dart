@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:sante_mada/acceuil_login/acceuil/acceuil.dart';
+import 'package:sante_mada/screen/acceuil_login/acceuil/acceuil.dart';
 import 'package:sante_mada/classes/widgetUtil.dart';
 
 class SettingAC extends StatefulWidget {
