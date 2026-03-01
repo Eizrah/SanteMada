@@ -411,7 +411,7 @@ class _SettingACState extends State<SettingAC> {
                   const SizedBox(width: 8),
                   const Text(
                     "Les changements seront synchronisés automatiquement.",
-                    style: TextStyle(color: Color(0xFF7B8A9E), fontSize: 12),
+                    style: TextStyle(color: Color(0xFF7B8A9E), fontSize: 10),
                   ),
                 ],
               ),

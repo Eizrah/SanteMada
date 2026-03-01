@@ -1,4 +1,0 @@
-à commencer prochainement :
-Ajout d'un patient en Local 
-
-à revoir la fonction ajoutPatient Ligne 67

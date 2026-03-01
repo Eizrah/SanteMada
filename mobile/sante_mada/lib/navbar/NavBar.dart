@@ -10,8 +10,13 @@ import 'package:sante_mada/setting_AC/SettingAC.dart';
 /// Affiche les onglets: Home, Patient, Prescription, Demande, Setting
 class MainNavigation extends StatefulWidget {
   final int initialIndex;
+  final String nAgent; // Le numéro de l'agent communautaire connecté
 
-  const MainNavigation({super.key, this.initialIndex = 0});
+  const MainNavigation({
+    super.key,
+    this.initialIndex = 0,
+    required this.nAgent,
+  });
 
   @override
   State<MainNavigation> createState() => _MainNavigationState();
@@ -19,21 +24,21 @@ class MainNavigation extends StatefulWidget {
 
 class _MainNavigationState extends State<MainNavigation> {
   late int _currentIndex;
-
-  // Liste des pages correspondant à chaque onglet
-  final List<Widget> _pages = [
-    const AddPatient(), // Home (index 0)
-    const PatientConsultation(), // Patient (index 1)
-    const FeedBackDoctor(), // Prescription (index 2)
-    const DemandeSpecial(), // Demande (index 3)
-    const Recap(), // Recap (index 4)
-    const SettingAC(), // Setting (index 5)
-  ];
+  late List<Widget> _pages;
 
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.initialIndex;
+    // On construit les pages ici pour pouvoir utiliser widget.nAgent
+    _pages = [
+      AddPatient(nAgent: widget.nAgent), // Home (index 0)
+      const PatientConsultation(), // Patient (index 1)
+      const FeedBackDoctor(), // Prescription (index 2)
+      const DemandeSpecial(), // Demande (index 3)
+      const Recap(), // Recap (index 4)
+      const SettingAC(), // Setting (index 5)
+    ];
   }
 
   @override
@@ -161,11 +166,16 @@ class CustomBottomNavBar extends StatelessWidget {
   }
 
   /// Méthode utilitaire pour naviguer vers une page spécifique
-  static void navigateToPage(BuildContext context, int pageIndex) {
+  static void navigateToPage(
+    BuildContext context,
+    int pageIndex,
+    String nAgent,
+  ) {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => MainNavigation(initialIndex: pageIndex),
+        builder: (context) =>
+            MainNavigation(initialIndex: pageIndex, nAgent: nAgent),
       ),
     );
   }

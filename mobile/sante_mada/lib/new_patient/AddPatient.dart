@@ -10,7 +10,9 @@ import 'package:sante_mada/models/Patient.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddPatient extends StatefulWidget {
-  const AddPatient({super.key});
+  final String nAgent; // Le numéro de l'agent communautaire connecté
+
+  const AddPatient({super.key, required this.nAgent});
 
   @override
   State<AddPatient> createState() => _AddPatient();
@@ -104,7 +106,7 @@ class _AddPatient extends State<AddPatient> {
         maladieHereditaire: _maladieHereditaire.text,
         poids: double.tryParse(_poids.text) ?? 0,
         taille: double.tryParse(_taille.text) ?? 0,
-        numeroAgent: '',
+        numeroAgent: widget.nAgent, // On utilise le nAgent de l'agent connecté
         nCIN: _numCin.text,
         nomComplet: _nomComplet.text,
         age: int.tryParse(_age.text) ?? 0,

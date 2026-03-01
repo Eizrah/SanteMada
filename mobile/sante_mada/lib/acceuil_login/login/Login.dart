@@ -15,10 +15,8 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final storage = const FlutterSecureStorage(
-  aOptions: AndroidOptions(
-    encryptedSharedPreferences: true,
-  ),
-);
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+  );
   // Controllers pour récupérer les valeurs des champs
   final TextEditingController _identifiantController = TextEditingController();
   final TextEditingController _motDePasseController = TextEditingController();
@@ -38,7 +36,11 @@ class _LoginState extends State<Login> {
         await storage.write(key: "nAgent", value: ac.nAgent.toString());
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const MainNavigation()),
+          MaterialPageRoute(
+            builder: (context) => MainNavigation(
+              nAgent: ac.nAgent,
+            ), // On passe le nAgent de l'agent connecté
+          ),
         );
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
